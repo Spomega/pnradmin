@@ -14,7 +14,12 @@
             </li>
 
             <li class="nav-title">
+                @if($logged_in_user->isAdmin())
                 @lang('menus.backend.sidebar.system')
+                @endif
+                @if(!$logged_in_user->isAdmin())
+                    @lang('menus.backend.sidebar.general')
+                    @endif
             </li>
 
             @if ($logged_in_user->isAdmin())
@@ -52,7 +57,8 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ active_class(Active::checkUriPattern('admin/auth/permission*')) }}" href="{{ route('admin.auth.permission.index') }}">
+                            <a class="nav-link {{ active_class(Active::checkUriPattern('admin/auth/permission*')) }}"
+                               href="{{ route('admin.auth.permission.index') }}">
                                 @lang('labels.backend.access.permissions.management')
                             </a>
                         </li>
@@ -81,6 +87,36 @@
                         <li class="nav-item">
                             <a class="nav-link {{
                             active_class(Active::checkUriPattern('admin/log-viewer/logs*'))
+                        }}" href="{{ route('log-viewer::logs.list') }}">
+                                @lang('menus.backend.log-viewer.logs')
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+            @if(!$logged_in_user->isAdmin())
+                <li class="divider"></li>
+
+                <li class="nav-item nav-dropdown {{
+                    active_class(Active::checkUriPattern('auth/booking*'), 'open')
+                }}">
+                    <a class="nav-link nav-dropdown-toggle {{
+                            active_class(Active::checkUriPattern('auth/booking*'))
+                        }}" href="#">
+                        <i class="nav-icon fas fa-list"></i> @lang('menus.backend.booking.main')
+                    </a>
+
+                    <ul class="nav-dropdown-items">
+                        <li class="nav-item">
+                            <a class="nav-link {{
+                            active_class(Active::checkUriPattern('auth/booking'))
+                        }}" href="{{ route('admin.auth.booking.detail') }}">
+                                @lang('menus.backend.booking.pnr')
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{
+                            active_class(Active::checkUriPattern('auth/booking'))
                         }}" href="{{ route('log-viewer::logs.list') }}">
                                 @lang('menus.backend.log-viewer.logs')
                             </a>

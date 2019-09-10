@@ -170,6 +170,10 @@ return [
                     'sort' => 'Sort',
                 ],
 
+                'bookings' => [
+                    'detail' => 'PNR'
+                ],
+
                 'users' => [
                     'active' => 'Active',
                     'associated_roles' => 'Associated Roles',

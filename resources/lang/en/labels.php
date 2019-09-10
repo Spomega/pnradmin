@@ -62,6 +62,11 @@ return [
                 ],
             ],
 
+            'bookings' =>[
+              'detail' => 'PNR Details',
+                'management' => 'Booking Management'
+            ],
+
             'users' => [
                 'active' => 'Active Users',
                 'all_permissions' => 'All Permissions',

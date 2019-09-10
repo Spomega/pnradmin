@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Booking;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use GuzzleHttp\Client;
 
 class BookingController extends Controller
 {
@@ -35,9 +36,10 @@ class BookingController extends Controller
                     'Authorization' => 'Basic ZWR3YXJkOnBpZQ=='],
                     'json'=>$data ]);
 
+
             $res = json_decode($response->getBody()->getContents());
 
-            print_r($res);
+           //dd($response->getStatusCode());
 
             $rawResponse = $res->rawResponse;
 
@@ -51,6 +53,8 @@ class BookingController extends Controller
                 $airlinePersonReturn = $logicalFlight[1]->physicalFlights[0]->customers[0]->airlinePersons[0];
                 $returnData["route"] = $logicalFlight[1]->originName . " - ". $logicalFlight[1]->destinationName;
                 $returnData["name"] = $airlinePersonReturn->firstName ." ". $airlinePersonReturn->lastName;
+                $returnData["departure"] = $logicalFlight[1]->departureTime;
+                $returnData["arrival"] = $logicalFlight[1]->arrivalTime;
 
             }
             else
@@ -59,6 +63,8 @@ class BookingController extends Controller
                 $airlinePersonOneWay = $logicalFlight[0]->physicalFlights[0]->customers[0]->airlinePersons[0];
                 $returnData["route"] = $logicalFlight[0]->originName . " - ". $logicalFlight[0]->destinationName;
                 $returnData["name"] = $airlinePersonOneWay->firstName ." ". $airlinePersonOneWay->lastName;
+                $returnData["departure"] = $logicalFlight[1]->departureTime;
+                $returnData["arrival"] = $logicalFlight[1]->arrivalTime;
 
             }
 
@@ -68,11 +74,17 @@ class BookingController extends Controller
             $returnData["charges"]   =  $this->getCharges($rawResponse->history);
             $details = (object)$returnData;
 
-            return view('show')->with('details',$details);
+           // dd($details);
+
+            return view('backend.booking.detail.show')->with('details',$details);
 
         }
         catch (\Exception $e){
             $e->getMessage();
+            echo $e->getCode();
+            echo $e->getMessage();
+            echo "------------------------------------------------------";
+            echo $e->getTraceAsString();
         }
 
     }

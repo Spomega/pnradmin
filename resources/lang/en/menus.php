@@ -54,7 +54,14 @@ return [
             'general' => 'General',
             'history' => 'History',
             'system' => 'System',
+
         ],
+
+        'booking' => [
+            'main' => 'Booking',
+            'pnr'  => 'PNR Details',
+            'management' => 'Booking Management'
+        ]
     ],
 
     'language-picker' => [

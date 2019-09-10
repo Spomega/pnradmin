@@ -73,4 +73,20 @@ return [
      * Makes it so social logins can not change passwords, etc.
      */
     'socialite_session_name' => 'socialite_provider',
-];
+
+
+    /**
+     *
+     * Radix Wrapper Server Connection
+     *
+     */
+
+    'bookings' => [
+        'get_booking' => 'http://ec2-54-234-113-88.compute-1.amazonaws.com/awa/booking/get_booking',
+        'authorization' => 'Basic ZWR3YXJkOnBpZQ==',
+    ]
+
+
+
+
+    ];

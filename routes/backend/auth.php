@@ -8,6 +8,7 @@ use App\Http\Controllers\Backend\Auth\User\UserStatusController;
 use App\Http\Controllers\Backend\Auth\User\UserSessionController;
 use App\Http\Controllers\Backend\Auth\User\UserPasswordController;
 use App\Http\Controllers\Backend\Auth\User\UserConfirmationController;
+use App\Http\Controllers\Backend\Booking\BookingController;
 
 // All route names are prefixed with 'admin.auth'.
 Route::group([
@@ -85,5 +86,25 @@ Route::group([
      **/
     Route::group(['namespace' => 'Permission'], function() {
         Route::resource('permission', 'PermissionController');
+    });
+
+
+
+});
+
+
+//route group for non admin users
+Route::group([
+    'prefix' => 'auth',
+    'as' => 'auth.',
+    'namespace' => 'Auth'
+], function () {
+
+    /**
+     * Booking
+     */
+    Route::group(['namespace' => 'Booking'], function() {
+        Route::get('booking',[BookingController::class,'index'])->name('booking.detail');
+        Route::post('booking',[BookingController::class,'show'])->name('booking.view');
     });
 });
