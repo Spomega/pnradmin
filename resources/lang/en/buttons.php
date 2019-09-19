@@ -51,5 +51,7 @@ return [
 
         'save' => 'Save',
         'view' => 'View',
+        'detail' => 'Get Details',
+        'pay' => 'Pay For Booking'
     ],
 ];

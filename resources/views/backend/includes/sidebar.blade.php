@@ -109,14 +109,14 @@
                     <ul class="nav-dropdown-items">
                         <li class="nav-item">
                             <a class="nav-link {{
-                            active_class(Active::checkUriPattern('auth/booking'))
+                            active_class(Active::checkUriPattern('auth/booking*'))
                         }}" href="{{ route('admin.auth.booking.detail') }}">
                                 @lang('menus.backend.booking.pnr')
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{
-                            active_class(Active::checkUriPattern('auth/booking'))
+                            active_class(Active::checkUriPattern('auth/booking*'))
                         }}" href="{{ route('log-viewer::logs.list') }}">
                                 @lang('menus.backend.log-viewer.logs')
                             </a>

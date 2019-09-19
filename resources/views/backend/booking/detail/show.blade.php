@@ -31,14 +31,18 @@
                 </tr>
                 <tr>
                     <td class="text-info"><i class="fa fa-plane-departure"></i> <span>Departure</span></td>
-                    <td>{{$details->departureTime}}</td>
+                    <td>{{$details->departure}}</td>
                 </tr>
                 <tr>
                     <td class="text-info"><i class="fa fa-plane-arrival"></i> <span>Arrival</span></td>
-                    <td>{{$details->arrivalTime}}</td>
+                    <td>{{$details->arrival}}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
+
+        <div class="col text-center">
+            {{ form_submit(__('buttons.general.pay')) }}
+        </div><!--col-->
     </div>
 @endsection
