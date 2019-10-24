@@ -84,8 +84,8 @@ class BookingController extends Controller
                 $airlinePersonOneWay = $logicalFlight[0]->physicalFlights[0]->customers[0]->airlinePersons[0];
                 $returnData["route"] = $logicalFlight[0]->originName . " - " . $logicalFlight[0]->destinationName;
                 $returnData["name"] = $airlinePersonOneWay->firstName . " " . $airlinePersonOneWay->lastName;
-                $returnData["departure"] = $logicalFlight[1]->departureTime;
-                $returnData["arrival"] = $logicalFlight[1]->arrivaltime;
+                $returnData["departure"] = $logicalFlight[0]->departureTime;
+                $returnData["arrival"] = $logicalFlight[0]->arrivaltime;
 
             }
 
