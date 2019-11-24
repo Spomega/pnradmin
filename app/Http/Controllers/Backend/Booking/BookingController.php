@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Backend\Booking;
+namespace App\Http\Controllers\Backend\
+Booking;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use GuzzleHttp\Client;
 
 class BookingController extends Controller
 {
-    //
 
     public function  index(){
 
@@ -17,49 +16,26 @@ class BookingController extends Controller
     }
 
 
-
+    // request for pnr details
     public  function show(Request $request){
 
 
 
         $pnr = $request->input("detail");
+        $payload = "{  \n   \"ConfirmationNumber\": \"".(string)$pnr."\"  \n }";
 
-        $ch = curl_init();
+        $response = $this->sendRequestToRadix($payload,"booking/get_booking");
+        $httpcode = $response["http_code"];
+        $result = $response["response"];
 
-        curl_setopt($ch, CURLOPT_URL, 'http://ec2-54-234-113-88.compute-1.amazonaws.com/awa/booking/get_booking');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "{  \n   \"ConfirmationNumber\": \"".(string)$pnr."\"  \n }");
-        curl_setopt($ch, CURLOPT_POST, 1);
+        //dd($result);
 
-        $headers = array();
-        $headers[] = 'Content-Type: application/json';
-        $headers[] = 'Accept: application/json';
-        $headers[] = 'Authorization: Basic ZWR3YXJkOnBpZQ==';
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        $result = curl_exec($ch);
-        if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
-        }
-
-
-        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
 
         if($httpcode!=500) {
 
 
-            /*
-             $client = new Client();
-            // try{
-             $response = $client->request('POST', 'http://ec2-54-234-113-88.compute-1.amazonaws.com/awa/booking/get_booking',
-                 ["headers" => ['Content-Type' => 'application/json',
-                     'Authorization' => 'Basic ZWR3YXJkOnBpZQ=='],
-                     'json'=>$data ]);
-              * */
-            $res = json_decode($result);
 
-            //dd($response->getStatusCode());
+            $res = json_decode($result);
 
             $rawResponse = $res->rawResponse;
 
@@ -67,9 +43,10 @@ class BookingController extends Controller
             $airlinedata = $rawResponse->airlines;
 
 
+
             $logicalFlight = $airlinedata[0]->logicalFlight;
             $returnData = array();
-          //  dd($logicalFlight);
+
 
             if (sizeof($logicalFlight) > 1) {
                 $returnData["type"] = "Return Trip";
@@ -89,22 +66,45 @@ class BookingController extends Controller
 
             }
 
-
+            $totalFare = $this->getCharges($rawResponse->history);
+            $currentDate = date(DATE_ATOM);
             $returnData["pnr"] = $rawResponse->confirmationNumber;
-            $returnData["charges"] = $this->getCharges($rawResponse->history);
+            $returnData["charges"] = $totalFare;
             $details = (object)$returnData;
-            //dd($details);
 
+             session(['securityGUID'=> $rawResponse->securityGuid,
+                 'confirmationNumber'=>$rawResponse->confirmationNumber,
+                 'baseAmount'=>(int)$totalFare,
+                 'bookingDate'=>$rawResponse->bookDate,
+                 'baseCurrency'=>$rawResponse->reservationCurrency,
+                 'cardHolder'=>"Naga Radixx",
+                 'cardNumber'=>"4111111111111111",
+                 'checkNumber'=>"123",
+                 'currencyPaid'=> $rawResponse->reservationCurrency,
+                 'datePaid' => $currentDate,
+                 'expirationDate'=>$currentDate,
+                 'exchangeRateDate'=>$currentDate,
+                 'paymentComment'=>"Payment for booking with confirmation number ".$rawResponse->confirmationNumber,
+                 'paymentAmount'=>(int)$totalFare,
+                 'originalCurrency' =>$rawResponse->reservationCurrency,
+                 'originalAmount' => (int)$totalFare,
+                 'cardCurrency'=>$rawResponse->reservationCurrency,
+                 'firstName'=>$rawResponse->reservationContacts[0]->firstName,
+                 'lastName'=>$rawResponse->reservationContacts[0]->lastName,
+                 'personOrgID'=>$rawResponse->reservationContacts[0]->personOrgID,
+                 'city' =>$rawResponse->reservationContacts[0]->city,
+                 'address11' => $rawResponse->reservationContacts[0]->address,
+                 'country'=>$rawResponse->reservationContacts[0]->country,
+                 'countryCode'=>$rawResponse->reservationContacts[0]->country,
+                 'email'=>$rawResponse->contactInfos[0]->contactField,
+                 'phoneNumber' => $rawResponse->contactInfos[1]->contactField,
+                 'age' => $rawResponse->reservationContacts[0]->age,
+                 'title' => $rawResponse->reservationContacts[0]->title
+
+
+             ]);
             return view('backend.booking.detail.show')->with('details', $details);
 
-            // }
-            //catch (\Exception $e){
-            //    $e->getMessage();
-            //  echo $e->getCode();
-            // echo $e->getMessage();
-            //  echo "------------------------------------------------------";
-            // echo $e->getTraceAsString();
-            // }
         }else{
             echo "Couldn't get a successful response from radix.Please try again";
         }
@@ -112,8 +112,7 @@ class BookingController extends Controller
 
     }
 
-
-
+      //function to get charges
     function getCharges($history)
     {
         foreach ($history as $hist)
@@ -127,4 +126,173 @@ class BookingController extends Controller
         return "none";
     }
 
+   //pay for booking
+    function  payForBooking(Request $request){
+
+        $guid = session('securityGUID');
+
+       $payload = "{  \n   \"transactionInfo\": {  \n   
+         \"securityGUID\": \"".session('securityGUID')."\",  \n    
+          \"carrierCodes\": [  \n   
+              {  \n         \"accessibleCarrierCode\": \"AW\"  \n       }  \n     ], 
+               \n     \"clientIPAddress\": \"\",  \n   
+                \"historicUserName\": \"\"  \n   },  \n   \"reservationInfo\": {  \n   
+                  \"seriesNumber\": \"299\", \n   
+                    \"confirmationNumber\": \"".session('confirmationNumber')."\"  \n  
+                     },  \n   \"externalPayments\": [  \n     {  \n       \"baseAmount\": ".session('baseAmount').",  \n     
+                       \"baseCurrency\": \"".session('baseCurrency')."\",  \n    
+                          \"cardHolder\": \"Naga Radixx\",  \n     
+                            \"cardNumber\": \"4111111111111111\",  \n    
+                               \"checkNumber\": 123,  \n    
+                                  \"currencyPaid\": \"".session('currencyPaid')."\",  \n     
+                                    \"cVCode\": \"123\",  \n     
+                                      \"datePaid\": \"".session('datePaid')."\",  \n    
+                                         \"documentReceivedBy\": \"naga\",  \n    
+                                            \"expirationDate\": \"".session('expirationDate')."\",  \n    
+                                               \"exchangeRate\": 0,  \n      
+                                                \"exchangeRateDate\": \"".session('expirationDate')."\", 
+                                                 \n       \"fFNumber\": \"16\",  \n     
+                                                   \"paymentComment\": \"".session('paymentComment')."\",  \n   
+                                                       \"paymentAmount\":".session('paymentAmount').",  \n    
+                                                          \"paymentMethod\": \"CASH\",  \n     
+                                                            \"reference\": \"test\",  \n   
+                                                                \"terminalID\": 2,  \n    
+                                                                   \"userData\": \"test\",  \n   
+                                                                       \"userID\": \"naga\",  \n   
+                                                                           \"iataNumber\": \"\",  \n   
+                                                                               \"valueCode\": \"123\",  \n   
+                                                                                   \"voucherNumber\": -214,  \n    
+                                                                                      \"isTACreditCard\": false,  \n    
+                                                                                         \"gcxID\": \"1\",  \n   
+                                                                                             \"gcxOptOption\": \"1\",  \n 
+                                                                                                   \"originalCurrency\": \"".session('originalCurrency')."\",  \n  
+                                                                                                        \"originalAmount\": ".session('originalAmount').",  \n    
+                                                                                                           \"transactionStatus\": \"APPROVED\",  \n    
+                                                                                                              \"authorizationCode\": \"t1\",  \n    
+                                                                                                                 \"paymentReference\": \"t2\",  \n  
+                                                                                                                      \"responseMessage\": \"t3\",  \n   
+                                                                                                                          \"cardCurrency\": \"GHS\",  \n   
+                                                                                                                              \"billingCountry\": \"840\",  \n     
+                                                                                                                                \"fingerPrintingSessionID\": \"840\",  \n    
+                                                                                                                                   \"payor\": {  \n         \"personOrgID\": ".session('personOrgID').",  \n   
+                                                                                                                                         \"firstName\": \"".session('firstName')."\",  \n 
+                                                                                                                                                 \"lastName\": \"".session('lastName')."\",  \n     
+                                                                                                                                                     \"middleName\": \"\",  \n     
+                                                                                                                                                         \"age\": ".session('age').",  \n
+                                                                                                                                                                \"dOB\": \"1987-10-24T21:01:19.735Z\",  \n
+                                                                                                                                                                       \"gender\": \"Male\",  \n
+                                                                                                                                                                              \"title\": \"".session('title')."\",  \n
+                                                                                                                                                                                    \"nationalityLaguageID\": -2147483648,  \n
+                                                                                                                                                                                           \"relationType\": \"Self\",  \n
+                                                                                                                                                                                                 \"wBCID\": 1,  \n
+                                                                                                                                                                                                     \"pTCID\": 1,  \n
+                                                                                                                                                                                                           \"pTC\": \"1\",  \n
+                                                                                                                                                                                                                \"travelsWithPersonOrgID\": -2147483648,  \n
+                                                                                                                                                                                                                       \"redressNumber\": \"na\",  \n
+                                                                                                                                                                                                                           \"knownTravelerNumber\": \"na\",  \n
+                                                                                                                                                                                                                                \"marketingOptIn\": true,  \n
+                                                                                                                                                                                                                                     \"useInventory\": false,  \n
+                                                                                                                                                                                                                                         \"address\": {  \n           \"address11\": \"".session('address11')."\",  \n  
+                                                                                                                                                                                                                                                  \"address2\": \"\",  \n    
+                                                                                                                                                                                                                                                         \"city\": \"ACCRA\",  \n    
+                                                                                                                                                                                                                                                                \"state\": \"\",  \n   
+                                                                                                                                                                                                                                                                        \"postal\": \"\",  \n    
+                                                                                                                                                                                                                                                                               \"country\": \"".session('country')."\",  \n    
+                                                                                                                                                                                                                                                                                      \"countryCode\": \"GH\",  \n   
+                                                                                                                                                                                                                                                                                              \"areaCode\": \"\",  \n           \"phoneNumber\": \"".session('phoneNumber')."\",  \n    
+                                                                                                                                                                                                                                                                                                     \"display\": \"\"  \n         },  \n   
+                                                                                                                                                                                                                                                                                                           \"company\": \"\",  \n         \"comments\": \"\",  \n   
+                                                                                                                                                                                                                                                                                                                 \"passport\": \"\",  \n   
+                                                                                                                                                                                                                                                                                                                       \"nationality\": \"\",  \n     
+                                                                                                                                                                                                                                                                                                                           \"profileId\": -2147483648,  \n     
+                                                                                                                                                                                                                                                                                                                               \"isPrimaryPassenger\": true,  \n     
+                                                                                                                                                                                                                                                                                                                                   \"contactInfos\": [  \n           {  \n             \"contactID\": 1,  \n     
+                                                                                                                                                                                                                                                                                                                                           \"personOrgID\": -2141,  \n       
+                                                                                                                                                                                                                                                                                                                                                 \"contactField\": \"3214446666\",  \n        
+                                                                                                                                                                                                                                                                                                                                                      \"contactType\": \"HomePhone\",  \n      
+                                                                                                                                                                                                                                                                                                                                                             \"extension\": \"\",  \n        
+                                                                                                                                                                                                                                                                                                                                                                  \"countryCode\": \"\",  \n     
+                                                                                                                                                                                                                                                                                                                                                                          \"areaCode\": \"\",  \n             \"phoneNumber\": \"".session('phoneNumber')."\",  \n       
+                                                                                                                                                                                                                                                                                                                                                                                \"display\": \"\",  \n             \"preferredContactMethod\": false  \n           }  \n 
+                                                                                                                                                                                                                                                                                                                                                                                        ],  \n         \"frequentFlyerNumber\": \"na\",  \n         \"suffix\": \"\"  \n    
+                                                                                                                                                                                                                                                                                                                                                                                           },  \n       \"result\": \"\",  \n       \"transactionID\": \"\",  \n     
+  
+  
+                                                                                                                                                                                                                                                                                                                                                                                         \"responseCode\": \"\",  \n       \"ancillaryData01\": \"\",  \n       \"ancillaryData02\": \"\",  \n       \"ancillaryData03\": \"\",  \n       \"ancillaryData04\": \"\",  \n       \"ancillaryData05\": \"\",  \n       \"processorID\": \"\",  \n       \"merchantID\": \"na\",  \n       \"processorName\": \"\",  \n       \"metaData\": [  \n         {  \n           \"keyName\": \"\",  \n           \"value\": \"\"  \n         }  \n       ]  \n     }  \n   ]  \n }";
+
+     //dd($payload);
+
+       // $response = $this->sendRequestToRadix1($payload,"ConnectPoint_Fulfillment/InsertExternalProcessedPayment");
+
+       //dd($response);
+        return view('backend.booking.detail.transaction');
+    }
+
+
+    //send request to Radix
+    function  sendRequestToRadix($payload,$endpoint){
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, session('url').$endpoint);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Accept: application/json';
+        $headers[] = 'Authorization: Basic ZWR3YXJkOnBpZQ==';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }
+
+
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        $response = array();
+
+        $response["response"] = $result;
+        $response["http_code"] = $httpcode;
+
+        return $response;
+
+    }
+
+    function  sendRequestToRadix1($payload,$endpoint){
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, session('url').$endpoint);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_POST, 1);
+
+        $headers = array();
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Accept: application/json';
+        $headers[] = 'Authorization: Basic ZWR3YXJkOnBpZQ==';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+
+        dd($result);
+        if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }
+
+
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        $response = array();
+
+        $response["response"] = $result;
+        $response["http_code"] = $httpcode;
+
+        return $response;
+
+    }
 }

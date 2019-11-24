@@ -4,6 +4,7 @@
 
 
 @section('content')
+    {{ html()->form('POST', route('admin.auth.booking.pay'))->class('form-horizontal')->open() }}
     <div class="row">
         <div class="table-responsive panel border-danger">
             <table class="table">
@@ -40,9 +41,12 @@
                 </tbody>
             </table>
         </div>
-
+        <div class="col">
+            {{ form_cancel(route('admin.auth.booking.detail'), __('buttons.general.cancel')) }}
+        </div><!--col-->
         <div class="col text-center">
             {{ form_submit(__('buttons.general.pay')) }}
         </div><!--col-->
     </div>
+    {{ html()->form()->close() }}
 @endsection

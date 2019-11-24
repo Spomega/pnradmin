@@ -22,3 +22,7 @@ Breadcrumbs::for('admin.auth.booking.view', function($trail){
     $trail->parent('admin.dashboard');
     $trail->push(__('menus.backend.booking.management'), route('admin.auth.booking.view'));
 });
+Breadcrumbs::for('admin.auth.booking.pay', function($trail){
+    $trail->parent('admin.dashboard');
+    $trail->push(__('menus.backend.booking.management'), route('admin.auth.booking.pay'));
+});

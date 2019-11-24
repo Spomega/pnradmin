@@ -107,5 +107,6 @@ Route::group([
     Route::group(['namespace' => 'Booking'], function() {
         Route::get('booking',[BookingController::class,'index'])->name('booking.detail');
         Route::post('booking',[BookingController::class,'show'])->name('booking.view');
+        Route::post('booking/pay',[BookingController::class,'payForBooking'])->name('booking.pay');
     });
 });
