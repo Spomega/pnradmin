@@ -3,17 +3,14 @@
  * Created by PhpStorm.
  * User: spomega
  * Date: 12/4/19
- * Time: 3:30 AM
+ * Time: 4:10 AM
  */
 
 namespace App\Http\Requests\Backend\Auth\Company;
 
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class StoreCompanyRequest extends FormRequest
+class ManageCompanyRequest
 {
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -33,10 +30,7 @@ class StoreCompanyRequest extends FormRequest
     {
         return [
             //
-            'name' => 'required|unique:roles|max:191',
-            'contact_person' => 'required|max:191',
-            'email' => 'required|email|max:191',
+
         ];
     }
-
 }

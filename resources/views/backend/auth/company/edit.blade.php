@@ -1,24 +1,24 @@
+
 @extends('backend.layouts.app')
 
-@section('Title', __('labels.backend.access.company.management') .' | '.__('labels.backend.access.company.create'))
-
+@section('title', __('labels.backend.access.company.management') . ' | ' . __('labels.backend.access.company.edit'))
 
 @section('content')
-
-    {{ html()->form('POST', route('admin.auth.company.store'))->class('form-horizontal')->open() }}
-
+    {{ html()->modelForm($company, 'PATCH', route('admin.auth.company.update', $company))->class('form-horizontal')->open() }}
     <div class="card">
         <div class="card-body">
             <div class="row">
                 <div class="col-sm-5">
                     <h4 class="card-title mb-0">
                         @lang('labels.backend.access.company.management')
-                        <small class="text-muted">@lang('labels.backend.access.company.create')</small>
+                        <small class="text-muted">@lang('labels.backend.access.company.edit')</small>
                     </h4>
                 </div><!--col-->
             </div><!--row-->
+            <!--row-->
 
-            <hr>
+            <hr />
+
             <div class="row mt-4">
                 <div class="col">
                     <div class="form-group row">
@@ -77,9 +77,10 @@
                                 ->autofocus() }}
                         </div><!--col-->
                     </div>
-                </div>
-            </div>
+                </div><!--col-->
+            </div><!--row-->
         </div><!--card-body-->
+
         <div class="card-footer">
             <div class="row">
                 <div class="col">
@@ -87,14 +88,10 @@
                 </div><!--col-->
 
                 <div class="col text-right">
-                    {{ form_submit(__('buttons.general.crud.create')) }}
+                    {{ form_submit(__('buttons.general.crud.update')) }}
                 </div><!--col-->
             </div><!--row-->
         </div><!--card-footer-->
-
-
     </div><!--card-->
-
-    {{ html()->form()->close() }}
-
+    {{ html()->closeModelForm() }}
 @endsection
