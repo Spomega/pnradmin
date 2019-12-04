@@ -22,6 +22,8 @@ class CreateTransactionTable extends Migration
             $table->string('comment')->nullable();
             $table->string('passenger_name');
             $table->string('phone_number');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

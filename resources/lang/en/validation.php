@@ -173,6 +173,12 @@ return [
                 'bookings' => [
                     'detail' => 'PNR'
                 ],
+                'company' => [
+                    'name' => 'Name',
+                    'contact' => 'Contact Person',
+                    'email'   => 'Email',
+                    'iata'    => 'IATA/Company Code'
+                ],
 
                 'users' => [
                     'active' => 'Active',

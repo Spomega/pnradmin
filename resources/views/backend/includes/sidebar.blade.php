@@ -50,6 +50,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {{ active_class(Active::checkUriPattern('admin/auth/company*')) }}"
+                               href="{{ route('admin.auth.company.index') }}">
+                                @lang('labels.backend.access.company.management')
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {{
                                 active_class(Active::checkUriPattern('admin/auth/role*'))
                             }}" href="{{ route('admin.auth.role.index') }}">
@@ -60,6 +66,12 @@
                             <a class="nav-link {{ active_class(Active::checkUriPattern('admin/auth/permission*')) }}"
                                href="{{ route('admin.auth.permission.index') }}">
                                 @lang('labels.backend.access.permissions.management')
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ active_class(Active::checkUriPattern('admin/auth/company*')) }}"
+                               href="{{ route('admin.auth.company.index') }}">
+                                @lang('labels.backend.access.company.management')
                             </a>
                         </li>
                     </ul>

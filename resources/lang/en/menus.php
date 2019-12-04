@@ -41,6 +41,13 @@ return [
                 'management' => 'Permission Management',
                 'main'       => 'Permissions',
             ],
+            'company'=> [
+                'all'        => 'All Companies',
+                'create'     => 'Create Company',
+                'edit'       => 'Edit Company',
+                'management' => 'Company Management',
+                'main'       => 'Companies',
+            ],
         ],
 
         'log-viewer' => [

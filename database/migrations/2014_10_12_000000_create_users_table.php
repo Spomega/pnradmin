@@ -26,7 +26,7 @@ class CreateUsersTable extends Migration
             $table->string('company')->nullable();
             $table->timestamp('password_changed_at')->nullable();
             $table->unsignedTinyInteger('active')->default(1);
-            $table->string('confirmation_code')->nullable();
+            $table->string('company')->nullable();
             $table->boolean('confirmed')->default(config('access.users.confirm_email') ? false : true);
             $table->string('timezone')->nullable();
             $table->timestamp('last_login_at')->nullable();

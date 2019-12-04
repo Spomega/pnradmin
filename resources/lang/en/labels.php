@@ -61,6 +61,18 @@ return [
                     'group'            => 'Group',
                 ],
             ],
+            'company' => [
+                'create' => 'Create Company',
+                'edit'   => 'Edit Company',
+                'management' => 'Company Management',
+
+                'table' => [
+                    'company'     => 'Company',
+                    'contact'            => 'Contact Person',
+                    'email' => 'email',
+                    'iata' => 'IATA/Company Code'
+                ],
+            ],
 
             'bookings' =>[
               'detail' => 'PNR Details',

@@ -88,6 +88,13 @@ Route::group([
         Route::resource('permission', 'PermissionController');
     });
 
+    /**
+    Permission Management
+     *
+     **/
+    Route::group(['namespace' => 'Company'], function() {
+        Route::resource('company', 'CompanyController');
+    });
 
 
 });
