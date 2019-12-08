@@ -2,12 +2,27 @@
 
 namespace App\Http\Controllers\Backend\
 Booking;
-
+use App\Repositories\Backend\Auth\TransactionRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class BookingController extends Controller
 {
+    /**
+     * @var TransactionRepository
+     *
+     */
+    protected  $companyRepository;
+
+    /**
+     * @param TransactionRepository transactionRepository
+     *
+     */
+    public function __construct(TransactionRepository $transactionRepository)
+    {
+        $this->transactionRepository = $transactionRepository;
+    }
+
 
     public function  index(){
 
@@ -99,8 +114,8 @@ class BookingController extends Controller
                  'email'=>$rawResponse->contactInfos[0]->contactField,
                  'phoneNumber' => $rawResponse->contactInfos[1]->contactField,
                  'age' => $rawResponse->reservationContacts[0]->age,
-                 'title' => $rawResponse->reservationContacts[0]->title
-
+                 'title' => $rawResponse->reservationContacts[0]->title,
+                 'route' => $returnData->route
 
              ]);
             return view('backend.booking.detail.show')->with('details', $details);
@@ -222,9 +237,26 @@ class BookingController extends Controller
 
      //dd($payload);
 
-       // $response = $this->sendRequestToRadix1($payload,"ConnectPoint_Fulfillment/InsertExternalProcessedPayment");
+        $response = $this->sendRequestToRadix1($payload,"ConnectPoint_Fulfillment/InsertExternalProcessedPayment");
 
-       //dd($response);
+
+        $result  = json_decode($response);
+
+        $payment  = $result->payments;
+        dd($result->payments);
+
+        $this->transactionRepository->create([
+            'confirmation_number'=>$result->confirmationNumber,
+             'date_paid' => $payment->datePaid,
+            'total_cost' => (double)$payment->baseAmount,
+            'route'=> session('route'),
+            'comment' => session('comment'),
+            'passenger_name' =>  session('firstName')." ".session('lastName'),
+            'phone_number' => session('phoneNumber'),
+            'user_id'=> session('admin_user_id')
+
+        ]);
+
         return view('backend.booking.detail.transaction');
     }
 

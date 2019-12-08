@@ -18,7 +18,7 @@ class CreateCompanyTable extends Migration
             $table->string('name');
             $table->string('contact_person');
             $table->string('email');
-            $table->string('company_code');
+            $table->string('company_code') ;
             $table->timestamps();
         });
     }

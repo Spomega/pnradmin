@@ -21,6 +21,6 @@ class Transaction extends Model
      * @var array
      */
     protected $fillable = ['confirmation_number','date_paid,total_cost',
-                             'route','comment','passenger_name','phone_number','user_id'];
+                             'route','comment','passenger_name','phone_number','user_id','base_currency'];
 
 }

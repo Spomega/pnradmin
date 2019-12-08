@@ -12,13 +12,13 @@ use Illuminate\Http\Request;
 class CompanyController extends Controller
 {
     /**
-     * @var PermissionRepository
+     * @var CompanyRepository
      *
      */
     protected  $companyRepository;
 
     /**
-     * @param PermissionRepository permissionRepository
+     * @param CompanyRepository companyRepository
      *
      */
     public function __construct(CompanyRepository $companyRepository)
