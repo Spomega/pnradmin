@@ -34,8 +34,6 @@ class BookingController extends Controller
     // request for pnr details
     public  function show(Request $request){
 
-
-
         $pnr = $request->input("detail");
         $payload = "{  \n   \"ConfirmationNumber\": \"".(string)$pnr."\"  \n }";
 
@@ -115,7 +113,7 @@ class BookingController extends Controller
                  'phoneNumber' => $rawResponse->contactInfos[1]->contactField,
                  'age' => $rawResponse->reservationContacts[0]->age,
                  'title' => $rawResponse->reservationContacts[0]->title,
-                 'route' => $returnData->route
+                 'route' => $returnData["route"]
 
              ]);
             return view('backend.booking.detail.show')->with('details', $details);
@@ -238,26 +236,30 @@ class BookingController extends Controller
      //dd($payload);
 
         $response = $this->sendRequestToRadix1($payload,"ConnectPoint_Fulfillment/InsertExternalProcessedPayment");
+        //dd($response);
 
-
-        $result  = json_decode($response);
+        $result  = json_decode($response["response"]);
 
         $payment  = $result->payments;
-        dd($result->payments);
+      //dd($result->payments);
 
         $this->transactionRepository->create([
             'confirmation_number'=>$result->confirmationNumber,
-             'date_paid' => $payment->datePaid,
-            'total_cost' => (double)$payment->baseAmount,
+            'date_paid' => date("Y-m-d",strtotime($payment[0]->datePaid)),
+            'total_cost' => (double)$payment[0]->baseAmount,
             'route'=> session('route'),
             'comment' => session('comment'),
             'passenger_name' =>  session('firstName')." ".session('lastName'),
             'phone_number' => session('phoneNumber'),
-            'user_id'=> session('admin_user_id')
+            'user_id'=>  $request->user()->id,
+            'base_currency' => $payment[0]->currencyPaid
 
         ]);
 
-        return view('backend.booking.detail.transaction');
+        return view('backend.booking.detail.transaction')
+            ->withTransactions($this->transactionRepository
+                ->orderBy('id','asc')
+                ->paginate());
     }
 
 
@@ -310,7 +312,7 @@ class BookingController extends Controller
 
         $result = curl_exec($ch);
 
-        dd($result);
+       // dd($result);
         if (curl_errno($ch)) {
             echo 'Error:' . curl_error($ch);
         }

@@ -23,6 +23,7 @@
                             <thead>
                             <tr>
                                 <th>Confirmation Number</th>
+                                <th>Route</th>
                                 <th>Passenger Name</th>
                                 <th>Amount</th>
                                 <th>Phone Number</th>
@@ -30,13 +31,16 @@
                             </tr>
                             </thead>
                             <tbody>
+                            @foreach($transactions as $transaction)
                                 <tr>
-                                    <td>TFSQ72</td>
-                                    <td>JOSEPH DAVIS</td>
-                                    <td>329.00 GHS </td>
-                                    <td>0246005828</td>
-                                    <td>2019-08-02</td>
+                                    <td>{{ucwords($transaction->confirmation_number)}}</td>
+                                    <td>{{ucwords($transaction->route)}}</td>
+                                    <td>{{ucwords($transaction->passenger_name)}}</td>
+                                    <td>{{ucwords($transaction->total_cost)}}</td>
+                                    <td>{{ucwords($transaction->phone_number)}}</td>
+                                    <td>{{ucwords($transaction->date_paid)}}</td>
                                 </tr>
+                            @endforeach
                             </tbody>
                         </table>
                     </div>
