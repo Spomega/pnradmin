@@ -25,4 +25,12 @@ trait UserRelationship
     {
         return $this->hasMany(PasswordHistory::class);
     }
+
+    /**
+     * @return mixed
+     */
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
