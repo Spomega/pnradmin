@@ -89,8 +89,16 @@ Route::group([
     });
 
     /**
-    Permission Management
+    Transaction Management
      *
+     **/
+    Route::group(['namespace' => 'Transaction'], function() {
+        Route::resource('transaction', 'TransactionController');
+    });
+
+    /**
+    Company Management
+    *
      **/
     Route::group(['namespace' => 'Company'], function() {
         Route::resource('company', 'CompanyController');

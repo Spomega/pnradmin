@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend\Auth\User;
 use App\Models\Auth\User;
 use App\Http\Controllers\Controller;
 use App\Events\Backend\Auth\User\UserDeleted;
+use App\Repositories\Backend\Auth\CompanyRepository;
 use App\Repositories\Backend\Auth\RoleRepository;
 use App\Repositories\Backend\Auth\UserRepository;
 use App\Repositories\Backend\Auth\PermissionRepository;
@@ -50,11 +51,24 @@ class UserController extends Controller
      *
      * @return mixed
      */
-    public function create(ManageUserRequest $request, RoleRepository $roleRepository, PermissionRepository $permissionRepository)
+    public function create(ManageUserRequest $request, RoleRepository $roleRepository, PermissionRepository $permissionRepository,CompanyRepository $companyRepository)
     {
+        $company_data = $companyRepository->get(['id','name']);
+
+
+
+        $companies = array();
+
+        foreach ($company_data as $data)
+        {
+
+            $companies[$data->id] = $data->name;
+
+        }
         return view('backend.auth.user.create')
             ->withRoles($roleRepository->with('permissions')->get(['id', 'name']))
-            ->withPermissions($permissionRepository->get(['id', 'name']));
+            ->withPermissions($permissionRepository->get(['id', 'name']))
+            ->withCompanies($companies);
     }
 
     /**
@@ -74,7 +88,8 @@ class UserController extends Controller
             'confirmed',
             'confirmation_email',
             'roles',
-            'permissions'
+            'permissions',
+            'company'
         ));
 
         return redirect()->route('admin.auth.user.index')->withFlashSuccess(__('alerts.backend.users.created'));

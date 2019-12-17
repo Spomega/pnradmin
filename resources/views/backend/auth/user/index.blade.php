@@ -46,7 +46,7 @@
                                 <td>{{ $user->email }}</td>
                                 <td>{!! $user->confirmed_label !!}</td>
                                 <td>{!! $user->roles_label !!}</td>
-                                <td>{!! $user->permissions_label !!}</td>
+                                <td>{!! $user->company !!}</td>
                                 <td>{!! $user->social_buttons !!}</td>
                                 <td>{{ $user->updated_at->diffForHumans() }}</td>
                                 <td>{!! $user->action_buttons !!}</td>

@@ -68,6 +68,10 @@ return [
             'main' => 'Booking',
             'pnr'  => 'PNR Details',
             'management' => 'Booking Management'
+        ],
+
+        'report' => [
+            'title' => 'Report'
         ]
     ],
 

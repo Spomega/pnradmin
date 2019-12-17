@@ -79,6 +79,10 @@ return [
                 'management' => 'Booking Management'
             ],
 
+            'reports' => [
+                'transaction' => 'Transactions'
+            ],
+
             'users' => [
                 'active' => 'Active Users',
                 'all_permissions' => 'All Permissions',

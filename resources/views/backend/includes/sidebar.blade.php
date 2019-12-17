@@ -23,6 +23,35 @@
             </li>
 
             @if ($logged_in_user->isAdmin())
+
+                <li class="nav-item nav-dropdown {{
+                    active_class(Active::checkUriPattern('admin/auth*'), 'open')
+                }}">
+                    <a class="nav-link nav-dropdown-toggle {{
+                        active_class(Active::checkUriPattern('admin/auth*'))
+                    }}" href="#">
+                        <i class="nav-icon far fa-address-card"></i>
+                        @lang('menus.backend.report.title')
+
+                        @if ($pending_approval > 0)
+                            <span class="badge badge-danger">{{ $pending_approval }}</span>
+                        @endif
+                    </a>
+
+                    <ul class="nav-dropdown-items">
+                        <li class="nav-item">
+                            <a class="nav-link {{
+                                active_class(Active::checkUriPattern('admin/auth/user*'))
+                            }}" href="{{ route('admin.auth.user.index') }}">
+                                @lang('labels.backend.access.reports.transaction')
+
+                                @if ($pending_approval > 0)
+                                    <span class="badge badge-danger">{{ $pending_approval }}</span>
+                                @endif
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="nav-item nav-dropdown {{
                     active_class(Active::checkUriPattern('admin/auth*'), 'open')
                 }}">
@@ -66,12 +95,6 @@
                             <a class="nav-link {{ active_class(Active::checkUriPattern('admin/auth/permission*')) }}"
                                href="{{ route('admin.auth.permission.index') }}">
                                 @lang('labels.backend.access.permissions.management')
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ active_class(Active::checkUriPattern('admin/auth/company*')) }}"
-                               href="{{ route('admin.auth.company.index') }}">
-                                @lang('labels.backend.access.company.management')
                             </a>
                         </li>
                     </ul>

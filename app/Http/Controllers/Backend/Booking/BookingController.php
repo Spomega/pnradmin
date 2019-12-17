@@ -36,7 +36,10 @@ class BookingController extends Controller
 
         $pnr = $request->input("detail");
         $payload = "{  \n   \"ConfirmationNumber\": \"".(string)$pnr."\"  \n }";
+        //$token_response = json_decode($this->getToken()["response"]);
+        //$token = $token_response->SecurityGUID;
 
+        //dd($token);
         $response = $this->sendRequestToRadix($payload,"booking/get_booking");
         $httpcode = $response["http_code"];
         $result = $response["response"];
@@ -45,7 +48,6 @@ class BookingController extends Controller
 
 
         if($httpcode!=500) {
-
 
 
             $res = json_decode($result);
@@ -137,6 +139,24 @@ class BookingController extends Controller
         }
 
         return "none";
+    }
+
+    function getToken(){
+
+        $payload ="{}";
+
+        $response = $this->sendRequestToRadix($payload,"security/generate_token");
+
+        return $response;
+
+
+    }
+
+    function saveReservation(){
+        $payload = "{  \n   \"actionType\": \"SaveReservation\",  \n   \"reservationInfo\": {  \n     \"seriesNumber\": \"299\",  \n     \"confirmationNumber\": \"".session("confirmationNumber")."\"  \n   },  \n   \"securityGUID\": \"".session("securityGUID")."\",  \n   \"carrierCodes\": [  \n     {  \n       \"accessibleCarrierCode\": \"AW\"  \n     }  \n   ],  \n   \"clientIPAddress\": \"\",  \n   \"historicUserName\": \"\"  \n }";
+        $response =  $this->sendRequestToRadix($payload,"ConnectPoint_Reservation/CreatePNR");
+
+        return $response;
     }
 
    //pay for booking
@@ -236,13 +256,12 @@ class BookingController extends Controller
      //dd($payload);
 
         $response = $this->sendRequestToRadix1($payload,"ConnectPoint_Fulfillment/InsertExternalProcessedPayment");
-        //dd($response);
+        $this->saveReservation();
+       //dd($response);
 
         $result  = json_decode($response["response"]);
 
         $payment  = $result->payments;
-      //dd($result->payments);
-
         $this->transactionRepository->create([
             'confirmation_number'=>$result->confirmationNumber,
             'date_paid' => date("Y-m-d",strtotime($payment[0]->datePaid)),
