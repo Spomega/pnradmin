@@ -53,6 +53,8 @@
 
     <!-- Scripts -->
     @stack('before-scripts')
+    <script src="https://code.jquery.com/jquery-3.3.1.js" type="text/javascript"></script>
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>-->
     {!! script(mix('js/manifest.js')) !!}
     {!! script(mix('js/vendor.js')) !!}
     {!! script(mix('js/backend.js')) !!}

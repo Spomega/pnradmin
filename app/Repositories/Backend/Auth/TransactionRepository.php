@@ -24,4 +24,10 @@ class TransactionRepository extends  BaseRepository
         // TODO: Implement model() method.
         return Transaction::class;
     }
+
+
+    public  function getTransactionByDate($startDate,$endDate){
+
+        return Transaction::whereBetween('date_paid',[$startDate,$endDate])->get();
+    }
 }

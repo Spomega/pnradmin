@@ -9,6 +9,7 @@ use App\Http\Controllers\Backend\Auth\User\UserSessionController;
 use App\Http\Controllers\Backend\Auth\User\UserPasswordController;
 use App\Http\Controllers\Backend\Auth\User\UserConfirmationController;
 use App\Http\Controllers\Backend\Booking\BookingController;
+use App\Http\Controllers\Backend\Booking\TransactionController;
 
 // All route names are prefixed with 'admin.auth'.
 Route::group([
@@ -124,4 +125,15 @@ Route::group([
         Route::post('booking',[BookingController::class,'show'])->name('booking.view');
         Route::post('booking/pay',[BookingController::class,'payForBooking'])->name('booking.pay');
     });
+
+
+    /**
+    Transaction Management
+     *
+     **/
+    Route::group(['namespace' => 'Transaction'], function() {
+        Route::get('transaction',[TransactionController::class,'index'])->name('transaction.index');
+        Route::post('transaction',[TransactionController::class,'filterByDate'])->name('transaction.filter');
+    });
+
 });

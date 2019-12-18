@@ -35,7 +35,7 @@ class BookingController extends Controller
     public  function show(Request $request){
 
         $pnr = $request->input("detail");
-        $payload = "{  \n   \"ConfirmationNumber\": \"".(string)$pnr."\"  \n }";
+        $payload = "{  \n   \"ConfirmationNumber\": \"".strtoupper((string)$pnr)."\"  \n }";
         //$token_response = json_decode($this->getToken()["response"]);
         //$token = $token_response->SecurityGUID;
 

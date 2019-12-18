@@ -25,7 +25,7 @@
                         ->class('col-md-2 form-control-label')
                         ->for('detail')}}
 
-                        <div class="col-md-10">
+                        <div class="col-md-8">
                             {{ html()->text('detail')
                                 ->class('form-control')
                                 ->placeholder(__('validation.attributes.backend.access.bookings.detail'))

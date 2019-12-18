@@ -66,8 +66,9 @@ return [
 
         'booking' => [
             'main' => 'Booking',
-            'pnr'  => 'PNR Details',
-            'management' => 'Booking Management'
+            'pnr'  => 'Pay For Booking ',
+            'management' => 'Booking Management',
+            'transaction' => 'Transactions'
         ],
 
         'report' => [
