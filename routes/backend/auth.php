@@ -134,6 +134,8 @@ Route::group([
     Route::group(['namespace' => 'Transaction'], function() {
         Route::get('transaction',[TransactionController::class,'index'])->name('transaction.index');
         Route::post('transaction',[TransactionController::class,'filterByDate'])->name('transaction.filter');
+        Route::get('admintransaction',[TransactionController::class,'adminindex'])->name('transaction.adminindex');
+        Route::post('admintransaction',[TransactionController::class,'filterAdminByDateCompany'])->name('transaction.adminfilter');
     });
 
 });

@@ -42,7 +42,7 @@
                         <li class="nav-item">
                             <a class="nav-link {{
                                 active_class(Active::checkUriPattern('admin/auth/user*'))
-                            }}" href="{{ route('admin.auth.user.index') }}">
+                            }}" href="{{ route('admin.auth.transaction.adminindex') }}">
                                 @lang('labels.backend.access.reports.transaction')
 
                                 @if ($pending_approval > 0)
