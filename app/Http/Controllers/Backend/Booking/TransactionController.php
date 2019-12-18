@@ -39,6 +39,8 @@ class TransactionController extends Controller
             $companies[$data->id] = $data->name;
         }
 
+
+
         return view('backend.auth.transaction.adminindex')
             ->withTransactions($this->transactionRepository
                 ->orderBy('id','asc')
