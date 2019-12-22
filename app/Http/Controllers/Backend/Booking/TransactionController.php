@@ -22,10 +22,10 @@ class TransactionController extends Controller
 
     function  index(Request $request){
 
+
+
         return view('backend.auth.transaction.index')
-            ->withTransactions($this->transactionRepository
-                ->orderBy('id','asc')
-                ->paginate());
+            ->withTransactions($this->transactionRepository->getTransactionByCompany($request->user()->company_id));
     }
 
     function  adminIndex(Request $request,CompanyRepository $companyRepository){
@@ -58,7 +58,7 @@ class TransactionController extends Controller
         //$this->transactionRepository->getTransactionByDate($startdate,$enddate);
 
         return view('backend.auth.transaction.index')
-            ->withTransactions($this->transactionRepository->getTransactionByDate($startdate,$enddate));
+            ->withTransactions($this->transactionRepository->getTransactionByCompanyDate($request->user()->company_id,$startdate,$enddate));
 
     }
 
@@ -84,7 +84,7 @@ class TransactionController extends Controller
 
        //dd($this->transactionRepository->getTransactionByCompany($company,$startdate,$enddate));
         return view('backend.auth.transaction.adminindex')
-            ->withTransactions($this->transactionRepository->getTransactionByCompany($company,$startdate,$enddate))
+            ->withTransactions($this->transactionRepository->getTransactionByCompanyDate($company,$startdate,$enddate))
             ->withCompanies($companies);
     }
 }

@@ -33,4 +33,13 @@ trait UserRelationship
     {
         return $this->hasMany(Transaction::class);
     }
+
+    /**
+     * @return mixed
+     */
+    public function company()
+    {
+        return $this->hasOne(Company::class);
+    }
+
 }
