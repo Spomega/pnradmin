@@ -58,7 +58,7 @@
                                     <td>{{ucwords($transaction->total_cost)}}</td>
                                     <td>{{ucwords($transaction->phone_number)}}</td>
                                     <td>{{ucwords($transaction->date_paid)}}</td>
-                                    <td>{{ucwords($transaction->user->full_name)}}</td>
+                                    <td>{{ucwords($transaction->user['full_name'])}}</td>
                                 </tr>
                             @endforeach
                             </tbody>
