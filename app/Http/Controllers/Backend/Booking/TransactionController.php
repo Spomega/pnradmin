@@ -40,7 +40,6 @@ class TransactionController extends Controller
         }
 
 
-
         return view('backend.auth.transaction.adminindex')
             ->withTransactions($this->transactionRepository
                 ->orderBy('id','asc')
