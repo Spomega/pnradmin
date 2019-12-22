@@ -25,6 +25,8 @@ class CreateTransactionTable extends Migration
             $table->string('base_currency');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->integer('company_id');
+            $table->foreign('company_id')->references('id')->on('company');
             $table->timestamps();
         });
     }

@@ -30,4 +30,10 @@ class TransactionRepository extends  BaseRepository
 
         return Transaction::whereBetween('date_paid',[$startDate,$endDate])->get();
     }
+
+    public function getTransactionByCompany($company,$startDate,$endDate){
+        return Transaction::where('company_id',$company)
+            ->whereBetween('date_paid',[$startDate,$endDate])
+            ->get();
+    }
 }

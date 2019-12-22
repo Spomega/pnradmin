@@ -21,3 +21,7 @@ Breadcrumbs::for('admin.auth.transaction.adminindex', function($trail){
     $trail->parent('admin.dashboard');
     $trail->push(__('menus.backend.booking.transaction'), route('admin.auth.transaction.adminindex'));
 });
+Breadcrumbs::for('admin.auth.transaction.adminfilter', function($trail){
+    $trail->parent('admin.dashboard');
+    $trail->push(__('menus.backend.booking.transaction'), route('admin.auth.transaction.adminfilter'));
+});

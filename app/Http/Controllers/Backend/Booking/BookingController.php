@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Backend\
 Booking;
 use App\Repositories\Backend\Auth\TransactionRepository;
 use Illuminate\Http\Request;
+use App\Repositories\Backend\Auth\CompanyRepository;
 use App\Http\Controllers\Controller;
 
 class BookingController extends Controller
 {
     /**
-     * @var TransactionRepository
+     * @var CompanyRepository
      *
      */
     protected  $companyRepository;
@@ -21,6 +22,7 @@ class BookingController extends Controller
     public function __construct(TransactionRepository $transactionRepository)
     {
         $this->transactionRepository = $transactionRepository;
+
     }
 
 
@@ -35,12 +37,17 @@ class BookingController extends Controller
     public  function show(Request $request){
 
         $pnr = $request->input("detail");
-        $payload = "{  \n   \"ConfirmationNumber\": \"".strtoupper((string)$pnr)."\"  \n }";
+        $token_response = json_decode($this->getToken()["response"]);
+        $guid = $token_response->SecurityGUID;
+
+
+       //$payload = "{  \n   \"ConfirmationNumber\": \"".strtoupper((string)$pnr)."\"  \n }";
+        $payload =  "{  \n   \"actionType\": \"GetReservation\",  \n   \"reservationInfo\": {  \n     \"seriesNumber\": \"299\",  \n     \"confirmationNumber\": \"".strtoupper((string)$pnr)."\"  \n   },  \n   \"securityGUID\": \"".$guid."\",  \n   \"carrierCodes\": [  \n     {  \n       \"accessibleCarrierCode\": \"AW\"  \n     }  \n   ],  \n   \"clientIPAddress\": \"\",  \n   \"historicUserName\": \"\"  \n }";
         //$token_response = json_decode($this->getToken()["response"]);
         //$token = $token_response->SecurityGUID;
 
-        //dd($token);
-        $response = $this->sendRequestToRadix($payload,"booking/get_booking");
+        //dd($payload);
+        $response = $this->sendRequestToRadix($payload,"ConnectPoint_Reservation/RetrievePNR");
         $httpcode = $response["http_code"];
         $result = $response["response"];
 
@@ -52,7 +59,9 @@ class BookingController extends Controller
 
             $res = json_decode($result);
 
-            $rawResponse = $res->rawResponse;
+            //$rawResponse = $res->rawResponse;
+
+            $rawResponse = $res;
 
 
             $airlinedata = $rawResponse->airlines;
@@ -87,7 +96,7 @@ class BookingController extends Controller
             $returnData["charges"] = $totalFare;
             $details = (object)$returnData;
 
-             session(['securityGUID'=> $rawResponse->securityGuid,
+             session(['securityGUID'=> $guid,
                  'confirmationNumber'=>$rawResponse->confirmationNumber,
                  'baseAmount'=>(int)$totalFare,
                  'bookingDate'=>$rawResponse->bookDate,
@@ -160,7 +169,10 @@ class BookingController extends Controller
     }
 
    //pay for booking
-    function  payForBooking(Request $request){
+    function  payForBooking(Request $request,CompanyRepository $companyRepository){
+
+
+
 
         $guid = session('securityGUID');
 
@@ -262,16 +274,18 @@ class BookingController extends Controller
         $result  = json_decode($response["response"]);
 
         $payment  = $result->payments;
+
         $this->transactionRepository->create([
             'confirmation_number'=>$result->confirmationNumber,
             'date_paid' => date("Y-m-d",strtotime($payment[0]->datePaid)),
             'total_cost' => (double)$payment[0]->baseAmount,
             'route'=> session('route'),
-            'comment' => session('comment'),
+            'comment' => session('paymentComment'),
             'passenger_name' =>  session('firstName')." ".session('lastName'),
             'phone_number' => session('phoneNumber'),
             'user_id'=>  $request->user()->id,
-            'base_currency' => $payment[0]->currencyPaid
+            'base_currency' => $payment[0]->currencyPaid,
+            'company_id' =>  $request->user()->company
 
         ]);
 

@@ -9,7 +9,6 @@
 namespace App\Repositories\Backend\Auth;
 use App\Models\Auth\Company;
 use Illuminate\Support\Facades\DB;
-
 use App\Repositories\BaseRepository;
 
 class CompanyRepository extends BaseRepository
@@ -24,6 +23,7 @@ class CompanyRepository extends BaseRepository
     {
         return Company::class;
     }
+
 
     /**
      * @param Permission  $permission

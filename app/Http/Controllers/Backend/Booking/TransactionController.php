@@ -63,10 +63,29 @@ class TransactionController extends Controller
 
     }
 
-    function filterAdminByDateCompany(Request $request){
+    function filterAdminByDateCompany(Request $request,CompanyRepository $companyRepository){
+
+        $company_data = $companyRepository->get(['id','name']);
+
+        $companies = array();
+
+        foreach ($company_data as $data)
+        {
+
+            $companies[$data->id] = $data->name;
+        }
         $date = $request->input('daterange');
+
+        list($startdate,$enddate) = explode("-",$date);
+
+        $startdate = date_format(date_create($startdate),'Y-m-d');
+        $enddate = date_format(date_create($enddate),'Y-m-d');
+
         $company = $request->input('company');
 
-        dd(User::where('company',$company));
+       //dd($this->transactionRepository->getTransactionByCompany($company,$startdate,$enddate));
+        return view('backend.auth.transaction.adminindex')
+            ->withTransactions($this->transactionRepository->getTransactionByCompany($company,$startdate,$enddate))
+            ->withCompanies($companies);
     }
 }

@@ -22,7 +22,7 @@
             </div><!--row-->
             <div  class="col-lg-12 border-bottom" style="display: block;margin-top: 10px;" >
 
-                {{ html()->form('POST', route('admin.auth.transaction.filter'))->class('form-horizontal')->open() }}
+                {{ html()->form('POST', route('admin.auth.transaction.adminfilter'))->class('form-horizontal')->open() }}
 
 
                 <label for="company">Company</label>
@@ -58,7 +58,7 @@
                                     <td>{{ucwords($transaction->total_cost)}}</td>
                                     <td>{{ucwords($transaction->phone_number)}}</td>
                                     <td>{{ucwords($transaction->date_paid)}}</td>
-                                    <td></td>
+                                    <td>{{ucwords($transaction->user->first_name)}} {{ucwords($transaction->user->last_name)}}</td>
                                 </tr>
                             @endforeach
                             </tbody>
