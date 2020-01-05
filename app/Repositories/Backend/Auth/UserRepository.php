@@ -99,14 +99,14 @@ class UserRepository extends BaseRepository
      */
     public function create(array $data) : User
     {
-       ($data['company']);
+
         return DB::transaction(function () use ($data) {
             $user = parent::create([
                 'first_name' => $data['first_name'],
                 'last_name' => $data['last_name'],
                 'email' => $data['email'],
                 'password' => $data['password'],
-                'company' => $data['company'],
+                'company_id' => $data['company'],
                 'active' => isset($data['active']) && $data['active'] === '1',
                 'confirmation_code' => md5(uniqid(mt_rand(), true)),
                 'confirmed' => isset($data['confirmed']) && $data['confirmed'] === '1',

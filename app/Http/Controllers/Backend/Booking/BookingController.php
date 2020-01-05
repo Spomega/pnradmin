@@ -285,7 +285,7 @@ class BookingController extends Controller
             'phone_number' => session('phoneNumber'),
             'user_id'=>  $request->user()->id,
             'base_currency' => $payment[0]->currencyPaid,
-            'company_id' =>  $request->user()->company
+            'company_id' =>  $request->user()->company_id
 
         ]);
 
@@ -298,6 +298,7 @@ class BookingController extends Controller
 
     //send request to Radix
     function  sendRequestToRadix($payload,$endpoint){
+
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, session('url').$endpoint);
